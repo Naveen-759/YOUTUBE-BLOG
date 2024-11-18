@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const path = require("path");
 const multer = require("multer");
+const runChat = require("../config/gemini");
+// import runChat from "../config/gemini";
 
 const Blog = require("../models/blog");
 const Comment = require("../models/comment");
@@ -19,7 +21,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get("/add-new", (req, res) => {
+router.get("/add-new", async (req, res) => {
   return res.render("addBlog", {
     user: req.user,
   });
@@ -30,12 +32,23 @@ router.get("/:id", async (req, res) => {
   const comments = await Comment.find({ blogId: req.params.id }).populate(
     "createdBy"
   );
-  console.log(comments);
+  // console.log(comments);
   return res.render("blog", {
     user: req.user,
     blog,
     comments,
   });
+});
+
+router.get("/delete/:id", async (req, res) => {
+  // if (req.method === "DELETE") {
+  // Your delete logic here
+  try {
+    await Blog.findByIdAndDelete(req.params.id);
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.post("/comment/:blogId", async (req, res) => {
@@ -49,8 +62,28 @@ router.post("/comment/:blogId", async (req, res) => {
 
 router.post("/", upload.single("coverImage"), async (req, res) => {
   const { title, body } = req.body;
+  // console.log(body);
+
+  const response = await runChat(body);
+  let responseArray = response.split("**");
+  // console.log(responseArray);
+
+  let newResponse = "";
+  for (let i = 0; i < responseArray.length; i++) {
+    if (i === 0 || i % 2 !== 1) {
+      newResponse += responseArray[i];
+    } else {
+      newResponse += "</br>" + "<b>" + responseArray[i] + "</b>";
+    }
+  }
+
+  let newResponse2 = newResponse.split("*").join(" ");
+  // let newResponseArray = newResponse2.split(" ");
+
+  console.log(newResponse2);
+
   const blog = await Blog.create({
-    body,
+    body: newResponse2,
     title,
     createdBy: req.user._id,
     coverImageURL: `/uploads/${req.file.filename}`,

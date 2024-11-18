@@ -1,0 +1,83 @@
+/* Base styles for the nav bar */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.appname h2 {
+  margin: 0;
+}
+
+.search {
+  flex-grow: 1;
+  margin: 0 20px;
+}
+
+.search input {
+  padding: 10px;
+  width: 40%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-left: -60%;
+}
+
+.about {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Media query for tablets (768px and below) */
+@media screen and (max-width: 768px) {
+  nav {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: space-between; */
+  }
+
+  .search {
+    width: 20%;
+    margin: 10px 0;
+  }
+
+  .search input {
+    /* padding: 10px; */
+    padding-left: 3px;
+    width: 40%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-left: -50%;
+  }
+}
+
+/* Media query for mobile devices (480px and below) */
+@media screen and (max-width: 480px) {
+  .appname h2 {
+    font-size: 1.5em;
+  }
+
+  .search {
+    /* order: 2; Places search below the About link */
+    margin: 10px 0;
+  }
+
+  /* .about {
+    order: 1; /* Places About link above search */
+  /*} */
+
+  .about,
+  .search {
+    width: 100%;
+    text-align: center;
+  }
+}
